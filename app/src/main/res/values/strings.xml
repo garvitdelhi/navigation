@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Navigation</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="drawerOpen">Drawer opens</string>
+    <string name="drawerClosed">Drawer Closes</string>
+    <string-array name="options">
+        <item>option1</item>
+        <item>option2</item>
+        <item>option3</item>
+        <item>option4</item>
+        <item>option5</item>
+        <item>option6</item>
+    </string-array>
+    <string-array name="optionsHeading">
+        <item>optionsHeading1</item>
+        <item>optionsHeading2</item>
+        <item>optionsHeading3</item>
+        <item>optionsHeading4</item>
+        <item>optionsHeading5</item>
+        <item>optionsHeading6</item>
+    </string-array>
+
+</resources>
