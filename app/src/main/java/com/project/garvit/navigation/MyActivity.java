@@ -8,6 +8,7 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,23 +32,13 @@ public class MyActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
+        Main_Screen screen = new Main_Screen();
+        getFragmentManager().beginTransaction().add(R.id.mainContent, screen, "mainFragment").commit();
         this.init();
     }
 
     private void init() {
         drawerList = (ListView) findViewById(R.id.drawerList);
-        listView = (ListView) findViewById(R.id.listView);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Resources r = getResources();
-                // Do something when an option is clicked in main listview
-                Toast.makeText(view.getContext(), "Option " + r.getStringArray(R.array.options)[i] + " is clicked", Toast.LENGTH_SHORT).show();
-            }
-        });
-        listView.setAdapter(new myListAdapter(this));
-
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
                 R.drawable.ic_drawer, R.string.drawerOpen, R.string.drawerClosed){
@@ -82,6 +73,11 @@ public class MyActivity extends ActionBarActivity {
                 selectItem(r.getStringArray(R.array.options)[i]);
             }
         });
+    }
+
+    @Override
+    public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
+        return super.onCreateView(parent, name, context, attrs);
     }
 
     @Override
@@ -165,56 +161,6 @@ class myAdapter extends BaseAdapter {
         ImageView imageView = (ImageView) row.findViewById(R.id.image);
         TextView textView = (TextView) row.findViewById(R.id.option);
         textView.setText(options[i]);
-        imageView.setImageResource(image[i]);
-        return row;
-    }
-}
-
-class myListAdapter extends BaseAdapter {
-
-    String[] options, optionsHeading;
-    int[] image = {
-            R.drawable.ic_launcher,
-            R.drawable.ic_launcher,
-            R.drawable.ic_launcher,
-            R.drawable.ic_launcher,
-            R.drawable.ic_launcher,
-            R.drawable.ic_launcher};
-    private Context context;
-
-    myListAdapter(Context context) {
-        options = context.getResources().getStringArray(R.array.options);
-        optionsHeading = context.getResources().getStringArray(R.array.optionsHeading);
-        this.context = context;
-    }
-
-    @Override
-    public int getCount() {
-        return options.length;
-    }
-
-    @Override
-    public Object getItem(int i) {
-        return options[i];
-    }
-
-    @Override
-    public long getItemId(int i) {
-        return i;
-    }
-
-    @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
-        View row = view;
-        if(row == null) {
-            LayoutInflater inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = inflater.inflate(R.layout.list_single_row, viewGroup, false);
-        }
-        ImageView imageView = (ImageView) row.findViewById(R.id.image);
-        TextView description = (TextView) row.findViewById(R.id.description);
-        TextView title = (TextView) row.findViewById(R.id.title);
-        description.setText(this.options[i]);
-        title.setText(this.optionsHeading[i]);
         imageView.setImageResource(image[i]);
         return row;
     }
