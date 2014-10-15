@@ -3,8 +3,11 @@ package com.project.garvit.navigation;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +18,31 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.LocationClient;
 
-public class Main_Screen extends Fragment {
+
+public class Main_Screen extends Fragment implements GooglePlayServicesClient.ConnectionCallbacks,
+        GooglePlayServicesClient.OnConnectionFailedListener {
+
+    LocationClient locationClient = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String permission = "android.permission.ACCESS_FINE_LOCATION";
+        if(getActivity().checkCallingOrSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
+            int resultCode =
+                    GooglePlayServicesUtil.
+                            isGooglePlayServicesAvailable(getActivity());
+            if (ConnectionResult.SUCCESS == resultCode) {
+                locationClient = new LocationClient(getActivity(), this, this);
+            } else {
+                Log.i("TEST", "Play services not available");
+            }
+        }
     }
 
     @Override
@@ -52,8 +74,46 @@ public class Main_Screen extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        if(locationClient != null) {
+            locationClient.connect();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        if(locationClient != null) {
+            locationClient.disconnect();
+        }
+        super.onStop();
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Toast.makeText(getActivity(), "Connected", Toast.LENGTH_SHORT).show();
+        String permission = "android.permission.ACCESS_FINE_LOCATION";
+        if(getActivity().checkCallingOrSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
+            Location location = locationClient.getLastLocation();
+            String locationString = "" + location.getLatitude() + "," + location.getLongitude();
+            TextView textView = (TextView) getActivity().findViewById(R.id.location);
+            textView.setText(locationString);
+        }
+    }
+
+    @Override
+    public void onDisconnected() {
+        Toast.makeText(getActivity(), "Disconnected. Please re-connect.",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 
 
